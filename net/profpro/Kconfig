@@ -1,0 +1,3 @@
+config PROFPRO
+	tristate "ProfPro Protocol Support"
+	default n
