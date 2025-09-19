@@ -35,3 +35,39 @@ static struct sk_buff *build_profpro_packet(struct net_device *dev, struct profp
 
 	return skb;
 }
+
+static void profpro_test_send(void){
+
+	struct net_device *dev;
+	struct profpro_addr src = { .network = 0x0808, .host = 0x0001};
+	struct profpro_addr dst = { .network = 0x0808, .host = 0x0002};
+	struct sk_buff *skb;
+
+	dev = dev_get_by_name(&init_net, "ens192");
+
+	if(!dev){
+		pr_err("ProfPro: Device not found!\n");
+		return;
+	}
+
+	skb = build_profpro_packet(dev, src, dst, "Hello World", 11);
+
+	if(!skb){
+		pr_err("ProfPro: Failed to build packet!\n");
+		dev_put(dev);
+		return;
+	}
+
+	dev_queue_xmit(skb);
+	dev_put(dev);
+	pr_info("ProfPro: Test packet was sent!\n");
+
+}
+
+static int __init profpro_init(void){
+
+	pr_info("ProfPro: Module was loaded!\n");
+	profpro_test_send();
+	return 0;
+
+}
