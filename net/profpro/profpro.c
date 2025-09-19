@@ -4,17 +4,21 @@
 #include <linux/skbuff.h>
 #include <linux/etherdevice.h>
 #include <linux/profpro.h>
-#include <profpro.h>
+#include "profpro.h"
 
 static struct sk_buff *build_profpro_packet(struct net_device *dev, struct profpro_addr src, struct profpro_addr dst, void *payload, size_t payload_len){
 
 	struct sk_buff *skb;
 	struct profpro_hdr *hdr;
 
-	skb = alloc_skb(sizeof(struct profpro_hdr) + payload_len + LL_RESERVED_SPACE(dev), GFP_ATOMIC)
+	skb = alloc_skb(sizeof(struct profpro_hdr) + payload_len + LL_RESERVED_SPACE(dev), GFP_ATOMIC);
 
-	if(!skb)
-		return null;
+	if(!skb){
+
+		pr_err("Failed to init socket buffer!\n");
+		return NULL;
+
+	}
 
 	skb_reserve(skb, LL_RESERVED_SPACE(dev));
 
@@ -27,7 +31,7 @@ static struct sk_buff *build_profpro_packet(struct net_device *dev, struct profp
 	hdr -> dst.host = htons(dst.host);
 	hdr -> checksum  = 0;
 
-	memcpy(skb_put(skb, payload_len), paylaod, payload_len);
+	memcpy(skb_put(skb, payload_len), payload, payload_len);
 
 	skb -> protocol = htons(ETH_P_PROFPRO);
 	skb -> dev = dev;
@@ -71,3 +75,16 @@ static int __init profpro_init(void){
 	return 0;
 
 }
+
+static void __exit profpro_exit(void){
+
+	pr_info("ProfPro: Module was unloaded!\n");
+
+}
+
+module_init(profpro_init);
+module_exit(profpro_exit);
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Xavier Wall");
+MODULE_DESCRIPTION("Supporting Kernel Module For ProfPro Networking Stack");

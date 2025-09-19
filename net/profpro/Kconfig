@@ -1,3 +1,5 @@
 config PROFPRO
 	tristate "ProfPro Protocol Support"
 	default n
+	help
+		Enable the ProfPro Protocol

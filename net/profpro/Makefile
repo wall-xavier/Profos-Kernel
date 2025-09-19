@@ -1,1 +1,1 @@
-obj-$(CONFIG_PROFPRO) =+ profpro.o
+obj-$(CONFIG_PROFPRO) += profpro.o

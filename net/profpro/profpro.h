@@ -16,7 +16,7 @@ struct profpro_addr {
 struct profpro_hdr {
 	__u8 version;
 	__u8 ttl;
-	__b16 length;
+	__be16 length;
 	struct profpro_addr src;
 	struct profpro_addr dst;
 	__be16 checksum;
